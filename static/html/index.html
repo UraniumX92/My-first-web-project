@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+
+<body>
+    <div class="mainContainer">
+        <h1 style="text-align: center;">Create an Account</h1>
+        <form id="accForm" action="/" method="post" target="_blank" onsubmit="return on_submit()" autocomplete="off">
+            <div class = "transparent-bg">
+                <div id="namediv" class="container transparent-bg">
+                    <input type="text" name="name" id="name" placeholder="Name" class="text-inp typeinp phtext">
+                </div>
+                <div class="container transparent-bg">
+                    <input type="number" name="phonenum" id="phNum" placeholder="Phone Number" class="text-inp typeinp phtext">
+                </div>
+                <div class="container transparent-bg">
+                    <input type="email" name="email" id="email" placeholder="E-Mail" class="text-inp typeinp phtext">
+                </div>
+                <div class="container transparent-bg">
+                    <input type="password" name="password" ondblclick="show_hide()" id="password" placeholder="Password" class="text-inp typeinp phtext">
+                </div>
+                <div id="genInpDiv" class="container dis transparent-bg">
+                    <input type="text" id="gendertxt" placeholder="Enter your gender here" class="text-inp typeinp phtext">
+                </div>
+            </div>
+            <div id="genderdiv" class="transparent-bg">
+                <div class="container transparent-bg">
+                    <label for="male">
+                        Male
+                    </label>
+                    <input type="radio" id="male" class="gendinp" name="gender" value="male" checked="checked">
+                </div>
+                <div class="container transparent-bg">
+                    <label for="female">
+                        Female
+                    </label>
+                    <input type="radio" id="female" class="gendinp" name="gender" value="female">
+                </div>
+                <div class="container transparent-bg">
+                    <label for="other">
+                        Other
+                    </label>
+                    <input type="radio" id="other" class="gendinp" name="gender">
+                </div>
+            </div>
+            <div class="transparent-bg">
+                <input id="submit" type="submit" value="Submit">
+            </div>
+            <a class=login href="/login" title="Login page">Already a member? Click here to login.</a>
+        </form>
+    </div>      
+    <script src="/scripts/index.js"></script>
+    <script src="/scripts/client_utils.js"></script>
+</body>
+
+</html>

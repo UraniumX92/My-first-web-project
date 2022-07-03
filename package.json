@@ -1,0 +1,23 @@
+{
+  "name": "proj1",
+  "version": "1.0.0",
+  "description": "Testing proj1 for webdev",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "test",
+    "webdev",
+    "learning",
+    "js"
+  ],
+  "author": "Syed Usama",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.1",
+    "nodemon": "^2.0.18",
+    "prompt-sync": "^4.2.0",
+    "pug": "^3.0.2"
+  }
+}

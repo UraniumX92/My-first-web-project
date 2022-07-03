@@ -1,0 +1,23 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    <title>Login</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Login</h1>
+        <form action="/login" method="post" target="_self" id="loginform" onsubmit="return onSubmit()">
+            <input class="text-inp round-border" type="email" name="email" placeholder="E-Mail">
+            <input class="text-inp round-border" type="password" name="password" id="password" placeholder="Password" ondblclick="show_hide()">
+            <input class="submit round-border" type="submit" value="Submit">
+            <a id="frgtps" href="#">Forgot passsword?</a>
+        </form>
+    </div>
+    <script src="/scripts/client_utils.js"></script>
+</body>
+</html>
