@@ -1,7 +1,6 @@
 const express = require('express');
 const fs  = require('fs');
 const path = require('path');
-const { hash } = require('./custom_hash');
 const hashing = require('./custom_hash')
 
 /* APP CONFIGURATIONS */
@@ -68,14 +67,14 @@ app.post('/',(req,res)=>{
     }
     console.log(inps);
     let form_inputs = JSON.stringify(req.body,null,4);
-    res.status(200).render('getr',params);
+    res.status(200).render('temp',params);
 });
 
 app.post('/login',(req,res)=>{
     let inps = req.body;
     console.log('post /login');
     console.log(inps);
-    if((inps.email == 'a@b.com') && (hash(inps.password) == hash("pass123"))){
+    if((inps.email == 'a@b.com') && (hashing.hash(inps.password) == hashing.hash("pass123"))){
         res.status(200).redirect('/dashboard');
     }
     else{
@@ -83,7 +82,7 @@ app.post('/login',(req,res)=>{
     }
 })
 
-// 404 Page
+// 404 Page  !! THIS SHOULD ALWAYS BE KEPT AT BOTTOM OF ALL MIDDLEWARES !!
 app.use((req,res)=>{
     console.log("--".repeat(15));
     console.log(req.url);
