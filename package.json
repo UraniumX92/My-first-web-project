@@ -1,22 +1,36 @@
 {
-  "name": "proj1",
+  "name": "firstwebproj",
   "version": "1.0.0",
-  "description": "Testing proj1 for webdev",
-  "main": "index.js",
+  "description": "This is my first ever web project using NodeJS, express.js and mongoDB in backend, HTML,CSS,js in frontend",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UraniumX92/My-first-web-project.git"
+  },
   "keywords": [
-    "test",
-    "webdev",
-    "learning",
-    "js"
+    "Express",
+    "Mongo",
+    "Node",
+    "Web",
+    "project"
   ],
-  "author": "Syed Usama",
+  "author": "Usama",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/UraniumX92/My-first-web-project/issues"
+  },
+  "homepage": "https://github.com/UraniumX92/My-first-web-project#readme",
   "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.1",
     "express": "^4.18.1",
-    "nodemon": "^2.0.18",
+    "express-session": "^1.17.3",
+    "mongoose": "^6.4.3",
+    "nodemon": "^2.0.19",
+    "popups": "^1.1.3",
     "prompt-sync": "^4.2.0",
     "pug": "^3.0.2"
   }
