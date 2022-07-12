@@ -12,8 +12,11 @@
     <div class="container">
         <h1>Login</h1>
         <form action="/login" method="post" target="_self" id="loginform" onsubmit="return onSubmit()">
-            <input class="text-inp round-border" type="email" name="email" placeholder="E-Mail">
+            <input class="text-inp round-border" id="email_" type="email" name="email" placeholder="E-Mail">
             <input class="text-inp round-border" type="password" name="password" id="password" placeholder="Password" ondblclick="show_hide()">
+            <div id="error-div">
+                <p id="error"></p>
+            </div>
             <input class="submit round-border" type="submit" value="Submit">
             <a id="frgtps" href="#">Forgot passsword?</a>
         </form>

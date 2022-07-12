@@ -1,3 +1,9 @@
+@font-face {
+    font-family: 'Ubuntu';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Ubuntu'), url("/fonts/Ubuntu-Regular.ttf") format('ttf');
+}
 * {
     font-family: Ubuntu;
 }

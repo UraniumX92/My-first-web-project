@@ -1,3 +1,10 @@
+@font-face {
+    font-family: 'Ubuntu';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Ubuntu'), url("/fonts/Ubuntu-Regular.ttf") format('ttf');
+}
+
 * {
     font-family: Ubuntu;
 }
@@ -63,7 +70,7 @@ input {
 .mainContainer {
     margin: 240px auto;
     width: 25rem;
-    height: 27rem;
+    height: 27.2rem;
     background-color: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(2px);
     box-shadow: -15px 15px 12px rgb(0 0 0 / 25%);
@@ -80,6 +87,19 @@ input {
     text-align: center;
     font-style: italic;
     cursor: pointer;
+}
+
+#error-div{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#error{
+    margin:auto;
+    color: red;
+    text-align: center;
+    font-weight: bold;
 }
 
 .dis{

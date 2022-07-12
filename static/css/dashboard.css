@@ -1,51 +1,9 @@
+@font-face {
+    font-family: 'Ubuntu';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Ubuntu'), url("/fonts/Ubuntu-Regular.ttf") format('ttf');
+}
 *{
-    font-family: Ubuntu; 
-    margin : 0px;
-}
-
-body{
-    height: 100vh;
-    background: url("/images/bg.jpg");
-    background-size: cover;
-}
-
-.navbar {
-    position: sticky;
-    top: -10px;
-    margin: auto;
-    display: flex;
-    width: 40vw;
-    height: 50px;
-    background-color: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(4px);
-    box-shadow: -15px 15px 12px rgba(0, 0, 0, 0.25);
-    border-radius: 50px;
-    top: 10px;
-    z-index: 2;
-    margin: auto;
-    flex-direction: row;
-    justify-content: center;
-}
-
-.navlist{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    list-style: none;
-    padding: 0;
-}
-
-.navlist li a {
-    color:black;
-    display: block;
-    text-decoration: none;
-    padding : 12px;
-    font-size: 20px;
-    font-weight: bold;
-    margin: 0px 10px;
-    border-radius: 15px;
-}
-
-.navlist li a:hover{
-    background-color: rgba(0, 0, 0, 0.15);
+    margin: 0px;
 }

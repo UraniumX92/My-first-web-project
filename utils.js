@@ -1,3 +1,5 @@
+const { restart } = require('nodemon');
+
 /* 
     Utility Functions which are used in app.js 
 */
@@ -62,8 +64,9 @@ function hash(string){
 
 function generateUUID(username,timestamp) {
     let tstr = `${timestamp}`;
+    let id_length = 30;
     let hashed = hash(username);
-    let uuid = '-'.repeat(Array.from(Array(hashed.length+tstr.length).fill('')).length);
+    let uuid = '-'.repeat(id_length);
     // Writing timestamp numbers at the even indicies of uuid
     for(let i=0,j=0;i<tstr.length*2;i++){
         if(i%2==0){
@@ -83,17 +86,15 @@ function generateUUID(username,timestamp) {
             tempJ = j;
         }
     }
-    uuid = replaceAt(uuid,tempI++,'-');
-    // writing hashed text at remaining indicies of uuid. there is 1 '-' character left in the end always
-    for(let i=tempI,j=tempJ;j<hashed.length;i++,j++){
+    // writing hashed text at remaining indicies of uuid, until id_length is reached
+    for(let i=tempI,j=tempJ;i<id_length;i++,j++){
         uuid = replaceAt(uuid,i,hashed[j]);
     }
-    // Removing the last '-' character
-    return uuid.slice(0,uuid.length-1);
+    return uuid;
 }
 
 function authCheck(req,res,next){
-    if(req.session.loggedIn){
+    if(req.session.loggedIn && req.session.userID){
         next();
     }
     else{
@@ -102,6 +103,7 @@ function authCheck(req,res,next){
 }
 
 function authLoginPages(req,res,next){
+    // req.session.loggedIn = true; // TODO : Remove this line after designing dashboard pages 
     if(req.session.loggedIn){
         res.status(200).redirect("/dashboard");
     }
@@ -110,24 +112,79 @@ function authLoginPages(req,res,next){
     }
 }
 
+function getTimeAgo(timestamp){
+    let tsnow = Math.floor(Date.now()/1000);
+    let temp_ts = tsnow-timestamp;
+    let minute = 60;
+    let hour = 60*minute;
+    let day = 24*hour;
+    let week = 7*day;
+    let year = 365*day;
+    let res_str = "";
+    let tlist = [0,0,0,0,0];
+    while(temp_ts>minute){
+        if(temp_ts>year){
+            tlist[0]++;
+            temp_ts -= year;
+        }
+        else if(temp_ts>week){
+            tlist[1]++;
+            temp_ts -= week;
+        }
+        else if(temp_ts>day){
+            tlist[2]++;
+            temp_ts -= day;
+        }
+        else if(temp_ts>hour){
+            tlist[3]++;
+            temp_ts -= hour;
+        }
+        else{
+            tlist[4]++;
+            temp_ts -= minute;
+        }
+    }
+    let changed = false;
+    for(let i=0;i<tlist.length;i++){
+        if(tlist[i]){
+            changed = true;
+        }
+    }
+    if(changed){
+        if(tlist[0]){
+            res_str += `${tlist[0]} Years `;
+        }
+        if(tlist[1]){
+            res_str += `${tlist[1]} Weeks `;
+        }
+        if(tlist[2]){
+            res_str += `${tlist[2]} Days `;
+        }
+        if(tlist[3]){
+            res_str += `${tlist[3]} Hours `;
+        }
+        if(tlist[4]){
+            res_str += `${tlist[4]} Minutes `;
+        }
+        res_str += `${temp_ts} Seconds `
+        return `${res_str}ago`;
+    }
+    else{
+        return "few seconds ago";
+    }
+}
+
 if(require.main===module){
     let ts = Math.floor(Date.now()/1000);
-    let name = prompt("Enter name: ");
-    console.log(`UUID : ${generateUUID(name,ts)}`);
-    // let sl = [];
-    // for(let i=0;i<2;i++){
-    //     let stringx = prompt("Enter text to hash: ");
-    //     let hashed = hash(stringx);
-    //     sl.push(hashed);
-    //     console.log(hashed);
-    // }
-    // console.log(sl[0]==sl[1]);
+    let ots = 1657301023;
+    console.log(`getDate : ${getTimeAgo(ots)}`);
 }
 
 module.exports = {
     generateAlphabets,
     max,
     replaceAt,
+    getTimeAgo,
     hash,
     authCheck,
     generateUUID,

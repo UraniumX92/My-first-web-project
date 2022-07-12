@@ -1,3 +1,9 @@
+@font-face {
+    font-family: 'Ubuntu';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Ubuntu'), url("/fonts/Ubuntu-Regular.ttf") format('ttf');
+}
 *{
     font-family: Ubuntu;
 }
@@ -65,4 +71,17 @@ body{
 
 .container h1{
     text-align: center;
+}
+
+#error-div{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#error{
+    margin:auto;
+    color: red;
+    text-align: center;
+    font-weight: bold;
 }

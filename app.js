@@ -94,79 +94,162 @@ Object.keys(LOGIN_GETS).forEach((key) => {
 });
 
 app.get("/dashboard", utils.authCheck, (req, res) => {
-    let user_id = req.session.userId;
-    let params = {
-
-    };
-    res.status(200).render('dashboard', params);
+    let user_id = req.session.userID;
+    Users.findOne({user_id:user_id},(err,doc)=>{
+        if(err){
+            res.status(500).send("Internal server error");
+            return;
+        }
+        if(doc){
+            let params = {
+                name : doc.user_name,
+                user_id : doc.user_id,
+                email : doc.email,
+                gender : doc.gender,
+                phone : doc.phone,
+                member_since : utils.getTimeAgo(doc.joined_at),
+            }
+            res.status(200).render('dashboard', params);
+        }
+    })
 });
 
-/* POST requests -------------------------------------------------------------------------------------------------------------------------- */
+app.get('/logout',utils.authCheck,(req,res)=>{
+    req.session.destroy();
+    res.redirect("/");
+});
+
+app.get('/delAccount',utils.authCheck,(req,res)=>{
+    Users.deleteOne({user_id:req.session.userID},(err)=>{
+        if(err){
+            res.status(500).send("Internal server error");
+        }
+        else{
+            req.session.destroy();
+            res.redirect("/");
+        }
+    })
+});
+
+// AJAX GETS -- Technically these are GET methods but they act like POST method
+
+// AJAX -> check login credentials
+app.get('/lgcheck',(req,res)=>{
+    let splitted = req.url.split("||is||");
+    let info = {
+        email : splitted[1].split("||end_value||")[0],
+        password : splitted[splitted.length-1].split("||end_value")[0],
+    }
+    console.log('/lgcheck AJAX');
+    Users.findOne({email:info.email},(err,doc)=>{
+        if(err){
+            res.status(200).send("Some error occured on server side. please reload the page and try again.");
+        }
+        if(!doc){
+            // Email is not in db
+            res.status(200).send("This Email is not registered!");
+        }
+        else{
+            // Email is in db. now we check for correct password
+            if(doc.password===utils.hash(info.password)){
+                req.session.loggedIn = true;
+                req.session.userID = doc.user_id;
+                res.status(200).send("pass");
+            }
+            else{
+                res.status(200).send("Incorrect Password!");
+            }
+        }
+    });
+});
+
+// AJAX -> Check new user's Email and password length
+app.get('/createAccCheck',(req,res)=>{
+    let minPasswordLength = 8;
+    let minNameLength = 5;
+    let splitted = req.url.split("||is||");
+    let info = {
+        name : splitted[1].split("||end_value||")[0],
+        email : splitted[2].split("||end_value||")[0],
+        password : splitted[3].split("||end_value")[0],
+    }
+    console.log('/createAccCheck AJAX');
+    Users.findOne({email:info.email},(err,doc)=>{
+        if(err){
+            res.status(200).send("Some error occured on server side. please reload the page and try again.");
+        }
+        if(!doc){
+            // Email is not in db - Success
+            if(info.name.length<minNameLength){
+                res.status(200).send(`Your username must have atleast ${minNameLength} characters.`);
+            }
+            else if(info.password.length<minPasswordLength){
+                res.status(200).send(`Your password must have atleast ${minPasswordLength} characters.`);
+            }
+            else{
+                res.status(200).send("pass");
+            }
+        }
+        else{
+            // Email is in db. - Failure
+            res.status(200).send("Entered Email is already in use by other user.");
+        }
+    });
+});
+
+// AJAX -> check user's password 
+app.get('/delAcc',utils.authCheck,(req,res)=>{
+    let splitted = req.url.split("||is||");
+    let info = {
+        password : splitted[1].split("||end_value")[0],
+    }
+    Users.findOne({user_id:req.session.userID},(err,doc)=>{
+        if(err){
+            res.status(200).send("false");
+        }
+        if(doc){
+            if(utils.hash(info.password)==doc.password){
+                res.status(200).send("true");
+            }
+            else{
+                res.status(200).send("false");
+            }
+        }
+    });
+});
+
+/* ----------------------------------------------------------------- POST requests --------------------------------------------------------- */
 app.post('/',utils.authLoginPages, (req, res) => {
     let new_user = req.body;
-    console.log(new_user);
 
     let joined_at = Math.floor(Date.now() / 1000);
     let user_id = utils.generateUUID(new_user.name, joined_at);
 
     // check if email is already in collection
-    let email_exists = true;
-    Users.findOne({ email: new_user.email }, (err, doc) => {
+    // Creating a doc for new_user
+    let user = new Users({
+        user_name: new_user.name,
+        password: utils.hash(new_user.password),
+        user_id,
+        joined_at,
+        email: new_user.email,
+        gender: new_user.gender,
+        phone: new_user.phonenum
+    })
+    user.save((err, doc) => {
         if (err) {
-            console.log(err);
-            email_exists = false;
+            res.status(500).send("Internal Server Error");
         }
         else {
-            if (doc) {
-                console.log("email exists");
-                res.status(404).redirect('/404');
-                return;
-            }
-            else {
-                // Creating a doc for new_user
-                let user = new Users({
-                    user_name: new_user.name,
-                    password: utils.hash(new_user.password),
-                    user_id,
-                    joined_at,
-                    email: new_user.email,
-                    gender: new_user.gender,
-                    phone: new_user.phonenum
-                })
-                console.log(`user doc unsaved : \n ${user}`);
-                user.save((err, doc) => {
-                    if (err) {
-                        res.status(500).send("Internal Server Error");
-                    }
-                    else {
-                        if(doc){
-                            // Modifying session cookies
-                            req.session.userID = doc.user_id;
-                            req.session.loggedIn = true;
-                            res.status(200).redirect('/dashboard');
-                        }
-                        else{
-                            res.status(500).send("Internal Server Error");
-                        }
-                    }
-                });
-            }
+            // Modifying session cookies
+            req.session.userID = doc.user_id;
+            req.session.loggedIn = true;
+            res.status(200).redirect('/dashboard');
         }
-    })
+    });
 });
 
-app.post('/login', (req, res) => {
-    let inps = req.body;
-    console.log('post /login');
-    console.log(inps);
-    if ((inps.email == 'a@b.com') && (utils.hash(inps.password) == utils.hash("pass123"))) {
-        req.session.loggedIn = true;
-        res.status(200).redirect('/dashboard');
-    }
-    else {
-        res.status(404).redirect('404');
-    }
-})
+app.post('/login',utils.authLoginPages);
 
 /* 404 Page  !! THIS SHOULD ALWAYS BE KEPT AT BOTTOM OF ALL MIDDLEWARES !! */
 app.use((req, res) => {

@@ -3,6 +3,8 @@ html
     head
         link(rel="icon" type="image/x-icon" href="/images/favicon.ico")
         link(rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico")
+        link(rel="stylesheet" href="css/base.css")
+        script(src="/scripts/client_utils.js") 
         block title 
             title Home
         block styles
@@ -17,5 +19,16 @@ html
                     a(href="/projects" id="projects") My Projects
                 li 
                     a(href="/contact" id="contact") Contact
-
+                li#pf
+                    img(id="profile-btn" src="/images/user.png" onclick="onClick()")
+                    div(id="profile-card") 
+                        div(class="card-item") Name : #{name}
+                        div(class="card-item") Gender : #{gender}
+                        div(class="card-item") Email : #{email}
+                        div(class="card-item") Phone : #{phone}
+                        div(class="card-item") UserID : #{user_id}
+                        div(class="card-item") Account Created : #{member_since}
+                        a(id="logout" class="card-item btn" href="/logout" onclick="return checkLogout()") Logout
+                        a(id="delAcc" class="card-item btn" href="/delAccount" onclick="return delAcc()") Delete Account
+                         
         block content
