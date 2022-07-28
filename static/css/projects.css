@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+*{
+    font-family: 'Ubuntu';
+    margin: 0px;
+}
+body{
+    background: url('/images/projects.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+#heading {
+    width: 23rem;
+    margin: 100px auto 0px auto;
+    display: flex;
+    font-size: 30px;
+    z-index: 2;
+    padding: 3px;
+    text-align: center;
+    background-color: rgba(110, 110, 110, 0.3);
+    backdrop-filter: blur(6px);
+    box-shadow: -15px 15px 12px rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+    color: rgb(0, 0, 0);
+}
+#container{
+    height : 45vh;
+    width: 85vw;
+    margin:2.5vw auto;
+    display: grid;
+    gap: 2rem;
+    grid-auto-flow: column;
+    grid-auto-columns: 27%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    padding:40px;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(6px);
+    box-shadow: -15px 15px 12px rgba(0, 0, 0, 0.25);
+    border-radius: 30px;
+}
+
+.rcard-item{
+    margin:5px;
+    padding: 2px;
+    font-size: 20px;
+}
+.card{
+    display: flex;
+    padding:3px;
+    flex-direction: column;
+    background-color: rgba(255, 255, 255, 0.5);
+    color: black;
+    border-radius: 12px;
+    transition: all 0.5s;
+}
+.hclass{
+    margin:5px;
+    padding:2px;
+}
+.card:hover{
+    transform: scale(1.07) skew(1.2deg);
+    cursor: default;
+}
+.rlink{
+    color:rgb(23, 46, 255);
+    text-decoration: none;
+}

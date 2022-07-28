@@ -1,10 +1,12 @@
 doctype html 
 html 
     head
+        meta(content="width=device-width, initial-scale=1" name="viewport")
         link(rel="icon" type="image/x-icon" href="/images/favicon.ico")
         link(rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico")
         link(rel="stylesheet" href="css/base.css")
-        script(src="/scripts/client_utils.js") 
+        script(src="/js/config.js")
+        script(src="/js/base.js") 
         block title 
             title Home
         block styles
@@ -14,11 +16,11 @@ html
         nav.navbar
             ul.navlist
                 li 
-                    a(href="/dashboard" id="home") Home
+                    a(href="/home" id="home") Home
                 li 
-                    a(href="/projects" id="projects") My Projects
+                    a(href="/projects" id="projects") Projects
                 li 
-                    a(href="/contact" id="contact") Contact
+                    a(href="/socials" id="contact") Socials
                 li#pf
                     img(id="profile-btn" src="/images/user.png" onclick="onClick()")
                     div(id="profile-card") 
@@ -27,7 +29,7 @@ html
                         div(class="card-item") Email : #{email}
                         div(class="card-item") Phone : #{phone}
                         div(class="card-item") UserID : #{user_id}
-                        div(class="card-item") Account Created : #{member_since}
+                        div(id="acDate" class="card-item" onclick="b_changeDate()") Account Created : #{member_since}
                         a(id="logout" class="card-item btn" href="/logout" onclick="return checkLogout()") Logout
                         a(id="delAcc" class="card-item btn" href="/delAccount" onclick="return delAcc()") Delete Account
                          

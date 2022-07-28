@@ -1,0 +1,87 @@
+extends base.pug
+
+block styles 
+    link(rel="stylesheet" href="/css/home.css")
+
+block title
+    title Dashboard
+
+block content 
+    div#main
+        div#top.containers 
+            div#my-profile.main-children
+                img(id="pf-img" src="/images/me.png" alt="GitHub Profile Pic")
+                h1(id="name" class="pf-info") Syed Usama, #{my_age}M
+                div(id="myinfo" class="pf-info")
+                    p Studying Computer Science Engineering at Shadan College of Engineering and Technology
+                    p Lives in Hyderabad, Telangana, India.
+            div#my-langs.main-children.right-children 
+                h1 Languages I've Learnt
+                ul#langlist 
+                    li.langListItem
+                        img(class="lang-ico" src="/images/c.ico") 
+                        div.lnspan C
+                    li.langListItem
+                        img(class="lang-ico" src="/images/cpp.ico") 
+                        div.lnspan C++ 
+                    li.langListItem
+                        img(class="lang-ico" src="/images/python.ico") 
+                        div.lnspan Python 
+                    li.langListItem
+                        img(class="lang-ico" src="/images/javascript.ico") 
+                        div.lnspan JavaScript
+                    li.langListItem
+                        img(class="lang-ico" src="/images/nodejs.ico") 
+                        div.lnspan NodeJS
+                    li.langListItem
+                        img(class="lang-ico" src="/images/html.ico") 
+                        div.lnspan HTML 
+                    li.langListItem
+                        img(class="lang-ico" src="/images/css3.ico") 
+                        div.lnspan CSS 
+                    li.langListItem
+                        img(class="lang-ico" src="/images/mongodb.ico") 
+                        div.lnspan MongoDB
+        div#middle.containers
+            div#my-projects.main-children 
+                h1 My Projects  
+                ul#projList 
+                    li.projItem
+                        div.projDiv
+                            h3 Encryptor (Desktop App using Python)
+                            p A text encryptor which uses encryption similar to polyalphabetic cipher, but instead of 26 alphabets it uses large range of ASCII characters.
+                            a(href="https://github.com/UraniumX92/Encryptor") Link to GitHub repository
+                    li.projItem
+                        div.projDiv
+                            h3 Offline Password Storage (Desktop App using Python)  
+                            p An encrypted password manager/storage which uses the encryption same as my "Encryptor" project, it auto generates encryption key and saves the password after encrypting it.
+                            a(href="https://github.com/UraniumX92/Offline-Password-Manager") Link to GitHub repository
+                    li.projItem
+                        div.projDiv
+                            h3 Discord Bot (A chatbot using Python)
+                            p A discord bot which uses MongoDB as database and with so many features. this is the project I've spent months on.
+                            a(href="https://github.com/UraniumX92/Discord-Bot-using-py") Link to GitHub repository
+                    li.projItem
+                        div.projDiv
+                            h3 2 Layered Cipher Decipher (A console app using C++)
+                            p This was my first ever project and first github repository, this console app can be used to cipher decipher text in 1 or 2 layers of polyalphabetic cipher.
+                            a(href="https://github.com/UraniumX92/Cipher-Decipher-using-Cpp") Link to GitHub repository
+                hr
+                p.redirects Click #[a(href="/projects") this link] to check out all of my projects on GitHub.
+            div#my-ideas.main-children.right-children
+                h1 My Future Plan 
+                ul#ideaList 
+                    li.ideaItem 
+                        h3 Encrypted 1 on 1 chatting website
+                        p My initial motivation to start web development was to make an encrypted and secure chatting site. I want to make this website using websockets.
+                    li.ideaItem 
+                        h3 Learn MySQL 
+                        p I have worked with MongoDB but since MySQL is widely used in industry, I want to learn how to use MySQL very soon.
+                    li.ideaItem 
+                        h3 Learn Boostrap 
+                        p Bootstrap is a free and open source front end development framework for the creation of websites and web apps. It is widely used and is very useful in designing websites, I am going to learn this very soon.
+                    li.ideaItem 
+                        h3 Become a Fullstack Dev 
+                        p I want to become a Fullstack developer early in my career, and explore other roles like software dev etc later on.
+                hr
+                p.redirects #[a(href="/socials") Click here] and contact me on any of the given platforms if you want to contribute in my project or just want to contact me.

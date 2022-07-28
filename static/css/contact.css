@@ -1,0 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+*{
+    font-family: 'Ubuntu';
+    margin: 0px;
+}
+body{
+    background:url('/images/contact.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+}

@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+*{
+    font-family: 'Ubuntu';
+    margin: 0px;
+}
+:root{
+    --pf_side : 15rem;
+    --lang_ico_side : 2rem;
+    --pf_small_s : 8rem;
+}
+
+body{
+    background: url("/images/dashboardz.jpg");
+    background-size: cover;
+    background-attachment: fixed;
+    height: 125vh;
+}
+
+ul{
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
+}
+a{
+    text-decoration: none;
+    color: blue;
+}
+
+#main {
+    margin : 25px auto;
+    padding: 5px;
+    width: 96.5vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.pf-info{
+    cursor:default;
+    margin: auto;
+    padding: 10px;
+}
+#pf-img{
+    margin: 10px;
+    height: var(--pf_side);
+    width: var(--pf_side);
+    border-radius: 500px;
+}
+#myinfo{
+    font-size: large;
+    font-weight: bold;
+}
+
+.lang-ico{
+    margin : 5px;
+    float: left;
+    height : var(--lang_ico_side);
+    width: var(--lang_ico_side);
+}
+#langlist{
+    padding: 5px;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.langListItems{
+    margin: 3px;
+    padding: 3px;
+    display: flex;
+    flex-direction: row;
+}
+.lnspan{
+    margin: 10px 5px;
+    float: left;
+    font-size: large;
+    font-weight: bold;
+}
+.projItem{
+    padding: 3px;
+    margin: 5px;
+}
+
+.ideaItem{
+    padding: 5px;
+    margin: 5px;
+}
+.redirects{
+    padding:5px;
+    margin: 5px;
+}
+.main-children{
+    padding : 8px;
+    margin : 10px;
+    border-radius: 25px;
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: -15px 15px 12px rgb(0 0 0 / 25%);
+    backdrop-filter: blur(8px);
+    transition: all 1s;
+    width: 40vw;
+    height: auto;
+    cursor: default;
+}
+.containers{
+    display: flex;
+    flex-direction: row;
+}
+.main-children > h1{
+    padding:10px;
+}
+.main-children:hover{
+    transform: scale(1.05) translateX(20px);
+}
+.right-children{
+    margin-left: auto;
+}
+.right-children:hover{
+    transform: scale(1.05) translateX(-20px);
+}
+
+@media (max-width:840px){
+    #pf-img{
+        height: var(--pf_small_s);
+        width: var(--pf_small_s);
+    }
+    .main-children{
+        margin: 10px auto;
+        width: 85vw;
+        height: auto;
+    }
+    .main-children:hover{
+        transform: scale(1.05);
+    }
+    .containers{
+        display: flex;
+        flex-direction: column;
+    }
+}

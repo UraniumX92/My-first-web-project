@@ -8,25 +8,25 @@
     <title>Create Account</title>
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/createAcc.css">
 </head>
 
 <body>
     <div class="mainContainer">
         <h1 style="text-align: center;">Create an Account</h1>
-        <form id="accForm" action="/" method="post" target="_self" onsubmit="return on_submit()" autocomplete="off">
+        <form id="accForm" action="/createAcc" method="post" target="_self" onsubmit="return on_submit()" autocomplete="off">
             <div class = "transparent-bg">
                 <div id="namediv" class="container transparent-bg">
-                    <input type="text" name="name" id="name_" placeholder="Name" class="text-inp typeinp phtext">
+                    <input type="text" name="name" id="name_" placeholder="Name" class="text-inp typeinp phtext" required>
                 </div>
                 <div class="container transparent-bg">
-                    <input type="number" name="phonenum" id="phNum" placeholder="Phone Number" class="text-inp typeinp phtext">
+                    <input type="number" name="phonenum" id="phNum" placeholder="Phone Number" class="text-inp typeinp phtext" required>
                 </div>
                 <div class="container transparent-bg">
-                    <input type="email" name="email" id="email_" placeholder="E-Mail" class="text-inp typeinp phtext">
+                    <input type="email" name="email" id="email_" placeholder="E-Mail" class="text-inp typeinp phtext" required>
                 </div>
                 <div class="container transparent-bg">
-                    <input type="password" name="password" ondblclick="show_hide()" id="password" placeholder="Password" class="text-inp typeinp phtext">
+                    <input type="password" name="password" ondblclick="show_hide()" id="password" placeholder="Password" class="text-inp typeinp phtext" required>
                 </div>
                 <div id="gentxt-div" class="container dis transparent-bg">
                     <input type="text" id="gendertxt" placeholder="Enter your gender here" class="text-inp typeinp phtext">
@@ -58,11 +58,12 @@
             <div class="transparent-bg">
                 <input id="submit" type="submit" value="Submit">
             </div>
-            <a class=login href="/login" title="Login page">Already a member? Click here to login.</a>
+            <a class=login href="/" title="Login page">Already a member? Click here to login.</a>
         </form>
     </div>      
-    <script src="/scripts/index.js"></script>
-    <script src="/scripts/client_utils.js"></script>
+    <script src="/js/config.js"></script>
+    <script src="/js/index.js"></script>
+    <script src="/js/client_utils.js"></script>
 </body>
 
 </html>

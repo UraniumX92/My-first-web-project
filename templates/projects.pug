@@ -1,0 +1,12 @@
+extends base.pug
+
+block styles 
+    link(rel="stylesheet", href="/css/projects.css")
+
+block title 
+    title My Projects
+
+block content 
+    div#heading
+        h1 My GitHub Repositories
+    div#container !{repo_cards}

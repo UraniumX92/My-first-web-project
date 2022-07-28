@@ -1,5 +1,3 @@
-const { restart } = require('nodemon');
-
 /* 
     Utility Functions which are used in app.js 
 */
@@ -105,11 +103,41 @@ function authCheck(req,res,next){
 function authLoginPages(req,res,next){
     // req.session.loggedIn = true; // TODO : Remove this line after designing dashboard pages 
     if(req.session.loggedIn){
-        res.status(200).redirect("/dashboard");
+        res.status(200).redirect("/home");
     }
     else{
         next();
     }
+}
+
+function getDateTimeStr(dt){
+    let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    let seconds = dt.getUTCSeconds();
+    let minutes = dt.getUTCMinutes();
+    let hours = dt.getUTCHours();
+    let day = dt.getUTCDate();
+    let month = dt.getUTCMonth();
+    let year = dt.getUTCFullYear();
+    let ampm = "AM";
+    if (hours > 12) {
+        hours -= 12;
+        ampm = "PM";
+    }
+    let tcomponents = [day,hours,minutes,seconds];
+    for(let i = 0;i<tcomponents.length;i++){
+        if(tcomponents[i]<10){
+            tcomponents[i] = `0${tcomponents[i]}`;
+        }
+    }
+    [day,hours,minutes,seconds] = tcomponents;
+    return `${day}/${months[month]}/${year} - ${hours}:${minutes}:${seconds} ${ampm} [UTC]`;
+}
+
+function getAgeFromTimestamp(timestamp){
+    let birthday = new Date(timestamp);
+    let ageDiffMs = Date.now() - birthday.getTime();
+    let ageDate = new Date(ageDiffMs);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
 }
 
 function getTimeAgo(timestamp){
@@ -122,20 +150,20 @@ function getTimeAgo(timestamp){
     let year = 365*day;
     let res_str = "";
     let tlist = [0,0,0,0,0];
-    while(temp_ts>minute){
-        if(temp_ts>year){
+    while(temp_ts>=minute){
+        if(temp_ts>=year){
             tlist[0]++;
             temp_ts -= year;
         }
-        else if(temp_ts>week){
+        else if(temp_ts>=week){
             tlist[1]++;
             temp_ts -= week;
         }
-        else if(temp_ts>day){
+        else if(temp_ts>=day){
             tlist[2]++;
             temp_ts -= day;
         }
-        else if(temp_ts>hour){
+        else if(temp_ts>=hour){
             tlist[3]++;
             temp_ts -= hour;
         }
@@ -150,23 +178,14 @@ function getTimeAgo(timestamp){
             changed = true;
         }
     }
+    let slist = ["Years","Weeks","Days","Hours","Minutes"];
     if(changed){
-        if(tlist[0]){
-            res_str += `${tlist[0]} Years `;
+        for(let i=0;i<slist.length;i++){
+            if(tlist[i]){
+                res_str += `${tlist[i]} ${slist[i]} `;
+            }
         }
-        if(tlist[1]){
-            res_str += `${tlist[1]} Weeks `;
-        }
-        if(tlist[2]){
-            res_str += `${tlist[2]} Days `;
-        }
-        if(tlist[3]){
-            res_str += `${tlist[3]} Hours `;
-        }
-        if(tlist[4]){
-            res_str += `${tlist[4]} Minutes `;
-        }
-        res_str += `${temp_ts} Seconds `
+        res_str += `${temp_ts} Seconds `;
         return `${res_str}ago`;
     }
     else{
@@ -189,4 +208,6 @@ module.exports = {
     authCheck,
     generateUUID,
     authLoginPages,
+    getDateTimeStr,
+    getYearsFromTimestamp: getAgeFromTimestamp,
 }

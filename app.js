@@ -1,13 +1,15 @@
-const express = require("express");
 const mongoose = require("mongoose");
+const express = require("express");
 const session = require("express-session");
 const utils = require("./utils");
+const https = require("https");
 const path = require("path");
+const cfg = require("./configGen");
 const fs = require("fs");
 
-/* Loading .env */
-require("dotenv").config()
-const envs = process.env
+/* Generating config file for client side scripts */
+cfg.generateConfigFile();
+const envs = cfg.envs;
 
 /* CONNECTING TO MONGODB CLIENT */
 let mongo_user = envs.MONGO_USER;
@@ -17,11 +19,11 @@ let mongo_options = {
     autoIndex: false,
 }
 
-mongoose.connect(`mongodb+srv://${mongo_user}:${mongo_password}@cluster0.zfovk.mongodb.net/test`, mongo_options, (err) => {
-    if (err) {
+mongoose.connect(`mongodb+srv://${mongo_user}:${mongo_password}@cluster0.zfovk.mongodb.net/test`, mongo_options,(err)=>{
+    if(err){
         console.log(`ERROR CONNECTING TO MONGO : ${err}`);
     }
-    else {
+    else{
         console.log("Successfully connected to mongo client.");
     }
 });
@@ -40,7 +42,9 @@ let user_schema = new mongoose.Schema({
 let Users = mongoose.model('users', user_schema);
 
 /* APP CONFIGURATIONS */
-const port = 80;
+const protocol = cfg.config.PROTOCOL;
+const host = cfg.config.HOST;
+const port = cfg.config.PORT;
 const app = express();
 let session_options = {
     secret: envs.SESSION_SECRET,
@@ -56,8 +60,8 @@ app.set('views', path.join(__dirname, 'templates'))
 
 // TODO change this method of routing. both / and /login should be sent using pug templates
 const LOGIN_GETS = {
-    '/': './static/html/index.html',
-    '/login': './static/html/login.html',
+    '/': './static/html/login.html',
+    '/createAcc': './static/html/createAcc.html',
 };
 
 const mapExtToContentType = {
@@ -71,21 +75,21 @@ const mapExtToContentType = {
 
 /* GET requests */
 /* Default GET Servings --------------------------------------------------------------------------------------------------------------------*/
-Object.keys(LOGIN_GETS).forEach((key) => {
-    app.get(key, utils.authLoginPages, (req, res) => {
+Object.keys(LOGIN_GETS).forEach((key)=>{
+    app.get(key, utils.authLoginPages,(req, res)=>{
         console.log("--".repeat(15));
         console.log(req.url);
         let fileToSend = LOGIN_GETS[key];
-        fs.readFile(fileToSend, (err, data) => {
-            if (err) {
+        fs.readFile(fileToSend,(err, data)=>{
+            if(err){
                 console.log("Some unknown error occured: ");
                 console.log(err);
             }
-            else {
+            else{
                 let ext = fileToSend.split('.');
                 ext = ext[ext.length - 1];
                 res.writeHead(200, { "Content-Type": mapExtToContentType[ext] });
-                res.end(data, () => {
+                res.end(data,()=>{
                     console.log(`sent ${fileToSend}`);
                 });
             }
@@ -93,55 +97,154 @@ Object.keys(LOGIN_GETS).forEach((key) => {
     });
 });
 
-app.get("/dashboard", utils.authCheck, (req, res) => {
+app.get("/home", utils.authCheck,(req, res)=>{
+    let dob_ts = Number(envs.MY_DOB_TS);
     let user_id = req.session.userID;
-    Users.findOne({user_id:user_id},(err,doc)=>{
+    Users.findOne({ user_id: user_id },(err, doc)=>{
         if(err){
             res.status(500).send("Internal server error");
             return;
         }
         if(doc){
             let params = {
-                name : doc.user_name,
-                user_id : doc.user_id,
-                email : doc.email,
-                gender : doc.gender,
-                phone : doc.phone,
-                member_since : utils.getTimeAgo(doc.joined_at),
+                name: doc.user_name,
+                user_id: doc.user_id,
+                email: doc.email,
+                gender: doc.gender,
+                phone: doc.phone,
+                member_since: utils.getTimeAgo(doc.joined_at),
+                my_age : utils.getYearsFromTimestamp(dob_ts*1000),
             }
-            res.status(200).render('dashboard', params);
+            res.status(200).render("home", params);
         }
     })
 });
 
-app.get('/logout',utils.authCheck,(req,res)=>{
+app.get("/projects",utils.authCheck,(req, res)=>{
+    let req_options = {
+        hostname: "api.github.com",
+        port: 443,
+        path: "/users/UraniumX92/repos",
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json',
+            'User-Agent': "My-web-proj"
+        }
+    }
+    let resStr = '';
+    let repoList;
+    const request = https.request(req_options,(response)=>{
+        response.on('data',(chunk)=>{
+            resStr += chunk;
+        });
+        response.on('end',()=>{
+            const card_class = "card";
+            const lnk_class = "rlink";
+            const heading = "h2";
+            const heading_class = "hclass";
+            const cardItem_class = "rcard-item";
+            const descTxt_class = "dsc-text";
+            repoList = JSON.parse(resStr);
+            let temp = repoList[0];
+            fs.writeFileSync("struct.txt", `${JSON.stringify(temp, null, 4)}`);
+            // Todo : send the github repos from here.
+            let cardsStr = '';
+            for (let i = 0; i < repoList.length; i++){
+                // <div></div>
+                let temp_repo = repoList[i];
+                let created = utils.getDateTimeStr(new Date(temp_repo.created_at));
+                let updated = utils.getDateTimeStr(new Date(temp_repo.pushed_at));
+                let name = temp_repo.name=="My-first-web-project"? `${temp_repo.name} (This website)` : temp_repo.name;
+                cardsStr += `
+                    <div class="${card_class}">
+                        <${heading} class="${heading_class}">${name}</${heading}>
+                        <a class="${lnk_class} ${cardItem_class}" href="${temp_repo.html_url}" target="_blank">Link to repository</a>
+                        <p class="${cardItem_class}"><b>Main language : </b>${temp_repo.language}</p>
+                        <p class="${descTxt_class} ${cardItem_class}"><b>Description:</b> ${temp_repo.description}</p>
+                        <p class="${cardItem_class}"><b>Created on :</b>${created}</p>
+                        <p class="${cardItem_class}"><b>Last updated on :</b>${updated}</p>
+                        <p class="${cardItem_class}"><b>Stars :</b>${temp_repo.stargazers_count}</p>
+                        <p class="${cardItem_class}"><b>Watchers :</b>${temp_repo.watchers_count}</p>
+                    </div>
+                `;
+            }
+            let user_id = req.session.userID;
+            Users.findOne({ user_id: user_id },(err, doc)=>{
+                if(err){
+                    res.status(500).send("Internal server error");
+                    return;
+                }
+                if(doc){
+                    let params = {
+                        name: doc.user_name,
+                        user_id: doc.user_id,
+                        email: doc.email,
+                        gender: doc.gender,
+                        phone: doc.phone,
+                        member_since: utils.getTimeAgo(doc.joined_at),
+                        repo_cards : cardsStr,
+                    }
+                    res.status(200).render("projects", params);
+                }
+            })
+        });
+    });
+    request.on('error',(error)=>{
+        res.status(200).render("err", { 'text': "Some error occured while fetching the page, try reloading the page", 'error': `${error}` });
+    });
+    request.end();
+});
+
+app.get("/socials",utils.authCheck,(req,res)=>{
+    let user_id = req.session.userID;
+    Users.findOne({ user_id: user_id },(err, doc)=>{
+        if(err){
+            res.status(500).send("Internal server error");
+            return;
+        }
+        if(doc){
+            let params = {
+                name: doc.user_name,
+                user_id: doc.user_id,
+                email: doc.email,
+                gender: doc.gender,
+                phone: doc.phone,
+                member_since: utils.getTimeAgo(doc.joined_at),
+            }
+            res.status(200).render("socials", params);
+        }
+    })
+});
+
+app.get('/logout', utils.authCheck,(req, res)=>{
     req.session.destroy();
     res.redirect("/");
 });
 
-app.get('/delAccount',utils.authCheck,(req,res)=>{
-    Users.deleteOne({user_id:req.session.userID},(err)=>{
-        if(err){
-            res.status(500).send("Internal server error");
-        }
-        else{
-            req.session.destroy();
-            res.redirect("/");
-        }
-    })
+app.get('/delAccount', utils.authCheck,(req, res)=>{
+    if(req.session.delAcc){
+        Users.deleteOne({ user_id: req.session.userID },(err)=>{
+            if(err){
+                res.status(500).send("Internal server error");
+            }
+            else{
+                req.session.destroy();
+                res.redirect("/");
+            }
+        })
+    }
+    else{
+        res.redirect("/");
+    }
 });
 
 // AJAX GETS -- Technically these are GET methods but they act like POST method
 
 // AJAX -> check login credentials
-app.get('/lgcheck',(req,res)=>{
-    let splitted = req.url.split("||is||");
-    let info = {
-        email : splitted[1].split("||end_value||")[0],
-        password : splitted[splitted.length-1].split("||end_value")[0],
-    }
+app.get('/lgcheck',(req, res)=>{
     console.log('/lgcheck AJAX');
-    Users.findOne({email:info.email},(err,doc)=>{
+    let info = req.query;
+    Users.findOne({ email: info.email },(err, doc)=>{
         if(err){
             res.status(200).send("Some error occured on server side. please reload the page and try again.");
         }
@@ -151,7 +254,7 @@ app.get('/lgcheck',(req,res)=>{
         }
         else{
             // Email is in db. now we check for correct password
-            if(doc.password===utils.hash(info.password)){
+            if(doc.password === utils.hash(info.password)){
                 req.session.loggedIn = true;
                 req.session.userID = doc.user_id;
                 res.status(200).send("pass");
@@ -164,26 +267,21 @@ app.get('/lgcheck',(req,res)=>{
 });
 
 // AJAX -> Check new user's Email and password length
-app.get('/createAccCheck',(req,res)=>{
+app.get('/createAccCheck',(req, res)=>{
+    console.log('/createAccCheck AJAX');
     let minPasswordLength = 8;
     let minNameLength = 5;
-    let splitted = req.url.split("||is||");
-    let info = {
-        name : splitted[1].split("||end_value||")[0],
-        email : splitted[2].split("||end_value||")[0],
-        password : splitted[3].split("||end_value")[0],
-    }
-    console.log('/createAccCheck AJAX');
-    Users.findOne({email:info.email},(err,doc)=>{
+    let info = req.query;
+    Users.findOne({ email: info.email },(err, doc)=>{
         if(err){
             res.status(200).send("Some error occured on server side. please reload the page and try again.");
         }
         if(!doc){
             // Email is not in db - Success
-            if(info.name.length<minNameLength){
+            if(info.name.length < minNameLength){
                 res.status(200).send(`Your username must have atleast ${minNameLength} characters.`);
             }
-            else if(info.password.length<minPasswordLength){
+            else if(info.password.length < minPasswordLength){
                 res.status(200).send(`Your password must have atleast ${minPasswordLength} characters.`);
             }
             else{
@@ -197,18 +295,17 @@ app.get('/createAccCheck',(req,res)=>{
     });
 });
 
-// AJAX -> check user's password 
-app.get('/delAcc',utils.authCheck,(req,res)=>{
-    let splitted = req.url.split("||is||");
-    let info = {
-        password : splitted[1].split("||end_value")[0],
-    }
-    Users.findOne({user_id:req.session.userID},(err,doc)=>{
+// AJAX -> check user's password before deleting account
+app.get('/delAcc', utils.authCheck,(req, res)=>{
+    console.log('/delAcc AJAX');
+    let info = req.query;
+    Users.findOne({ user_id: req.session.userID },(err, doc)=>{
         if(err){
             res.status(200).send("false");
         }
         if(doc){
-            if(utils.hash(info.password)==doc.password){
+            if(utils.hash(info.password) == doc.password){
+                req.session.delAcc = true;
                 res.status(200).send("true");
             }
             else{
@@ -218,8 +315,41 @@ app.get('/delAcc',utils.authCheck,(req,res)=>{
     });
 });
 
+// AJAX -> change Date/Relative date in user profile card
+app.get('/bDateChange', utils.authCheck,(req, res)=>{
+    console.log('/bDateChange AJAX');
+    let info = req.query;
+
+    Users.findOne({ user_id: req.session.userID },(err, doc)=>{
+        if(err){
+            res.status(200).send("err");
+            return;
+        }
+        if(doc){
+            let ts = doc.joined_at;
+            let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+            if(info.date.includes("ago")){
+                let date = new Date(ts * 1000);
+                let hour = date.getUTCHours();
+                let ampm = "AM";
+                if(hour > 12){
+                    hour -= 12;
+                    ampm = "PM";
+                }
+                res.status(200).send(`on ${date.getUTCDate()}-${months[date.getUTCMonth()]}-${date.getUTCFullYear()} ${hour}:${date.getUTCMinutes()}:${date.getUTCSeconds()} ${ampm} [UTC]`);
+            }
+            else{
+                res.status(200).send(utils.getTimeAgo(ts));
+            }
+        }
+        else{
+            res.status(200).send("err");
+        }
+    })
+});
+
 /* ----------------------------------------------------------------- POST requests --------------------------------------------------------- */
-app.post('/',utils.authLoginPages, (req, res) => {
+app.post('/createAcc', utils.authLoginPages,(req, res)=>{
     let new_user = req.body;
 
     let joined_at = Math.floor(Date.now() / 1000);
@@ -236,40 +366,40 @@ app.post('/',utils.authLoginPages, (req, res) => {
         gender: new_user.gender,
         phone: new_user.phonenum
     })
-    user.save((err, doc) => {
-        if (err) {
+    user.save((err, doc)=>{
+        if(err){
             res.status(500).send("Internal Server Error");
         }
-        else {
+        else{
             // Modifying session cookies
             req.session.userID = doc.user_id;
             req.session.loggedIn = true;
-            res.status(200).redirect('/dashboard');
+            res.status(200).redirect('/home');
         }
     });
 });
 
-app.post('/login',utils.authLoginPages);
+app.post('/', utils.authLoginPages);
 
 /* 404 Page  !! THIS SHOULD ALWAYS BE KEPT AT BOTTOM OF ALL MIDDLEWARES !! */
-app.use((req, res) => {
+app.use((req, res)=>{
     console.log("--".repeat(15));
-    console.log(req.url);
+    console.log(req.url + req.method);
     let fileToSend = "./static/html/404.html";
-    fs.readFile(fileToSend, (err, data) => {
-        if (err) {
+    fs.readFile(fileToSend,(err, data)=>{
+        if(err){
             console.log("Some unknown error occured: ");
             console.log(err);
             res.writeHead(500, { "Content-Type": "text/plain" });
-            res.end("Error Code 500 : Internal Server Error", () => {
+            res.end("Error Code 500 : Internal Server Error",()=>{
                 console.log("Sent \"Error Code 500 : Internal Server Error\"");
             })
         }
-        else {
+        else{
             let ext = fileToSend.split('.');
             ext = ext[ext.length - 1];
             res.writeHead(404, { "Content-Type": mapExtToContentType[ext] });
-            res.end(data, () => {
+            res.end(data,()=>{
                 console.log(`sent ${fileToSend}`);
             });
         }
@@ -277,6 +407,6 @@ app.use((req, res) => {
 })
 
 /* SERVER DEPLOYMENT */
-app.listen(port, () => {
-    console.log(`Express: Server is up and running on port ${port} \nlocalhost:${port}`);
+app.listen(port, host,()=>{
+    console.log(`Express: Server is up and running on port ${protocol}://localhost:${port} \nlocalhost:${port}`);
 });

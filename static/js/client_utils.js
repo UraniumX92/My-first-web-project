@@ -1,14 +1,15 @@
 // Use this function in login.html form
 function onSubmit(){
-    let email_inp = document.getElementById('email_');
-    let password_inp = document.getElementById('password');
+    let email_val = document.getElementById('email_').value;
+    let password_val = document.getElementById('password').value;
     let flag = true;
-    if(email_inp.value== '' || password_inp.value == ''){
+    if(email_val== '' || password_val == ''){
         alert("Enter your credentials!");
         flag = false;
     }
-
     if(flag){
+        email_val = encodeURIComponent(email_val);
+        password_val = encodeURIComponent(password_val);
         let xhttp = new XMLHttpRequest();
         xhttp.onload = function(){
             let error_element = document.getElementById('error');
@@ -20,7 +21,7 @@ function onSubmit(){
                 flag = true;
             }
         }
-        xhttp.open("GET",`http://localhost/lgcheck?email||is||${email_inp.value}||end_value||password||is||${password_inp.value}||end_value||`,false);
+        xhttp.open("GET",`${PROTOCOL}://${HOST}:${PORT}/lgcheck?email=${email_val}&password=${password_val}`,false);
         xhttp.send();
     }
     
@@ -52,9 +53,9 @@ function on_submit() {
 
     if(flag){
         let xhttp = new XMLHttpRequest();
-        let email_value = document.getElementById("email_").value;
-        let password_value = document.getElementById("password").value;
-        let name_value = document.getElementById("name_").value;
+        let email_value = encodeURIComponent(document.getElementById("email_").value);
+        let password_value = encodeURIComponent(document.getElementById("password").value);
+        let name_value = encodeURIComponent(document.getElementById("name_").value);
         let err_element = document.getElementById("error");
         xhttp.onload = function(){
             if(this.responseText!='pass'){
@@ -65,7 +66,7 @@ function on_submit() {
                 flag = true;
             }
         }
-        xhttp.open("GET",`http://localhost/createAccCheck?name||is||${name_value}||end_value||email||is||${email_value}||end_value||password||is||${password_value}||end_value||`,false);
+        xhttp.open("GET",`${PROTOCOL}://${HOST}:${PORT}/createAccCheck?name=${name_value}&email=${email_value}&password=${password_value}`,false);
         xhttp.send();
     }
 
@@ -82,37 +83,5 @@ function show_hide() {
     }
     else {
         passInp.type = 'password';
-    }
-}
-
-function checkLogout(){
-    return confirm("Are you sure you want to logout?");
-}
-function delAcc(){
-    let password =  prompt("Enter the password associated with your account to confirm the deletion of account");
-    if(password===null || password===""){
-        return false;
-    }
-    let xhttp = new XMLHttpRequest();
-    let check;
-    xhttp.onload = function(){
-        check = JSON.parse(this.responseText.toLowerCase());
-    }
-    xhttp.open("GET",`http://localhost:80/delAcc?password||is||${password}||end_value||`,false);
-    xhttp.send();
-    if(!check){
-        alert("Incorrect password entered, Account deletion cancelled!");
-    }
-    return check;
-}
-
-function onClick(){
-    // Used in base.pug and its children to show-hide the profile card
-    let prof_card = document.getElementById("profile-card");
-    if(getComputedStyle(prof_card).display=="flex"){
-        prof_card.style.display = "none";
-    }
-    else{
-        prof_card.style.display = "flex";
     }
 }

@@ -11,16 +11,17 @@
 <body>
     <div class="container">
         <h1>Login</h1>
-        <form action="/login" method="post" target="_self" id="loginform" onsubmit="return onSubmit()">
-            <input class="text-inp round-border" id="email_" type="email" name="email" placeholder="E-Mail">
-            <input class="text-inp round-border" type="password" name="password" id="password" placeholder="Password" ondblclick="show_hide()">
+        <form action="/" method="post" target="_self" id="loginform" onsubmit="return onSubmit()">
+            <input class="text-inp round-border" id="email_" type="email" name="email" placeholder="E-Mail" required>
+            <input class="text-inp round-border" type="password" name="password" id="password" placeholder="Password" ondblclick="show_hide()" required>
             <div id="error-div">
                 <p id="error"></p>
             </div>
             <input class="submit round-border" type="submit" value="Submit">
-            <a id="frgtps" href="#">Forgot passsword?</a>
+            <a id="frgtps" href="/createAcc">New here? Create account</a>
         </form>
     </div>
-    <script src="/scripts/client_utils.js"></script>
+    <script src="/js/config.js"></script>
+    <script src="/js/client_utils.js"></script>
 </body>
 </html>
